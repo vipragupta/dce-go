@@ -17,7 +17,6 @@ package general
 import (
 	"context"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 
@@ -41,10 +40,15 @@ type generalExt struct {
 var infraYmlPath string
 
 func init() {
+	DceLog, fileErr := config.CreateFileAppendMode(types.DCE_OUT)
+	if fileErr != nil {
+		log.Error("Error in creating DCE Log file")
+	}
+	log.SetOutput(DceLog)
+
 	logger = log.WithFields(log.Fields{
 		"plugin": "general",
 	})
-	log.SetOutput(os.Stdout)
 	logger.Println("Plugin Registering")
 
 	//Register plugin with name

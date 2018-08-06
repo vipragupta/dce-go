@@ -227,3 +227,11 @@ func CreateFileAppendMode(filename string) (*os.File, error) {
 	//defer File.Close()
 	return File, err
 }
+
+func SetLogOutput (log *Log) {
+	DceLog, fileErr := CreateFileAppendMode(types.DCE_OUT)
+	if fileErr != nil {
+		log.Error("Error in creating DCE Log file")
+	}
+	log.SetOutput(DceLog)
+}

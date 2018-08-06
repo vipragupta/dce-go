@@ -69,6 +69,8 @@ const (
 	INFRA_CONTAINER         = "networkproxy"
 	IS_SERVICE              = "isService"
 	FOREVER                 = 1<<63 - 1
+	DCE_OUT					= "dce.out"
+	DCE_ERR					= "dce.err"
 
 )
 

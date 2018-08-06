@@ -70,6 +70,12 @@ func (exec *dockerComposeExecutor) Disconnected(exec.ExecutorDriver) {
 }
 
 func (exec *dockerComposeExecutor) LaunchTask(driver exec.ExecutorDriver, taskInfo *mesos.TaskInfo) {
+	DceLog, fileErr := config.CreateFileAppendMode(types.DCE_OUT)
+	if fileErr != nil {
+		log.Error("Error in creating DCE Log file")
+	}
+	log.SetOutput(DceLog)
+
 	log.Println("====================Mesos LaunchTask====================")
 	pod.ComposeExcutorDriver = driver
 	logger = log.WithFields(log.Fields{
@@ -346,13 +352,12 @@ func init() {
 }
 
 func main() {
-	DceLog, fileErr := config.CreateFileAppendMode("dce.log")
-	//DceErr, fileError := config.CreateFileAppendMode("/dce.err")
-
+	DceLog, fileErr := config.CreateFileAppendMode(types.DCE_OUT)
 	if fileErr != nil {
 		log.Error("Error in creating DCE Log file")
 	}
 	log.SetOutput(DceLog)
+
 	log.Println("====================Genesis Executor (Go)====================")
 	log.Println("created dce log file.")
 	sig := make(chan os.Signal, 1)
