@@ -40,11 +40,7 @@ type generalExt struct {
 var infraYmlPath string
 
 func init() {
-	DceLog, fileErr := config.CreateFileAppendMode(types.DCE_OUT)
-	if fileErr != nil {
-		log.Error("Error in creating DCE Log file")
-	}
-	log.SetOutput(DceLog)
+	log.SetOutput(config.CreateFileAppendMode(types.DCE_OUT))
 
 	logger = log.WithFields(log.Fields{
 		"plugin": "general",

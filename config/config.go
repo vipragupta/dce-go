@@ -214,11 +214,11 @@ func IsService() bool {
 	return GetConfig().GetBool(types.IS_SERVICE)
 }
 
-func CreateFileAppendMode(filename string) (*os.File, error) {
+func CreateFileAppendMode(filename string) *os.File {
 
 	File, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error in creating %v file", filename, err)
 	}
-	return File, err
+	return File
 }
