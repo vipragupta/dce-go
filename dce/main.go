@@ -346,7 +346,7 @@ func init() {
 }
 
 func main() {
-	DceLog, fileErr := config.CreateFileAppendMode("/dce.log")
+	DceLog, fileErr := config.CreateFileAppendMode("dce.log")
 	//DceErr, fileError := config.CreateFileAppendMode("/dce.err")
 
 	if fileErr != nil {
@@ -354,7 +354,7 @@ func main() {
 	}
 	log.SetOutput(DceLog)
 	log.Println("====================Genesis Executor (Go)====================")
-
+	log.Println("created dce log file.")
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL, syscall.SIGUSR1)
 	go func() {

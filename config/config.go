@@ -221,8 +221,9 @@ func CreateFileAppendMode(filename string) (*os.File, error) {
 	File, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	defer File.Close()
+	}// else {
+		//os.Chmod(filename, 0777)
+	//}
+	//defer File.Close()
 	return File, err
 }
