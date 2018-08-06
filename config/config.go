@@ -213,3 +213,16 @@ func EnableDebugMode() bool {
 func IsService() bool {
 	return GetConfig().GetBool(types.IS_SERVICE)
 }
+
+func CreateFileAppendMode(filename string) (*os.File, error) {
+	folder := GetAppFolder()
+	filename = filepath.Join(folder, filename)
+
+	File, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer File.Close()
+	return File, err
+}
