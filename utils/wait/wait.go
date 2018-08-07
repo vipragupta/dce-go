@@ -208,6 +208,7 @@ func RetryCmdLogs(cmd *exec.Cmd, retry bool) ([]byte, error) {
 			//if this line executes, that means that either the log command returned which means something went wrong,
 			//or there is an error. So either way, the logs are not getting logged. so reset it to false.
 			SetLogStatus(false)
+			log.Printf("Updated Log Status, Log command was Not successful")
 			if err != nil {
 				log.Printf("Error while running cmd: %v", err)
 			}
@@ -237,5 +238,4 @@ func SetLogStatus(logCommandRunSuccess bool) {
 	LogStatus.Lock()
 	LogStatus.LogCommandSuccess = logCommandRunSuccess
 	LogStatus.Unlock()
-	log.Printf("Updated Log Status, Log command was successful? : %v", logCommandRunSuccess)
 }

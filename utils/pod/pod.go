@@ -921,7 +921,7 @@ func DockerDump() {
 		Dceerr := config.CreateFileAppendMode(types.DCE_ERR)
 		cmdContainerd.Stdout = Dcelog
 		cmdContainerd.Stderr = Dceerr
-		
+
 		err = cmdContainerd.Run()
 		if err != nil {
 			log.Errorf("Error running cmd to kill containerd pid: %v", err)
