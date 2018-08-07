@@ -284,6 +284,7 @@ func createSymlink() {
 // Launch pod
 // docker-compose up
 func LaunchPod(files []string) string {
+	//log.SetOutput(os.Stdout)
 	log.Println("====================Launch Pod====================")
 
 	parts, err := GenerateCmdParts(files, " up -d")
@@ -295,9 +296,9 @@ func LaunchPod(files []string) string {
 	cmd := exec.Command("docker-compose", parts...)
 	log.Printf("Launch Pod : Command to launch task : %v", cmd.Args)
 
-	Dceout := config.CreateFileAppendMode(types.DCE_OUT)
+	Dcelog := config.CreateFileAppendMode(types.DCE_OUT)
 	Dceerr := config.CreateFileAppendMode(types.DCE_ERR)
-	cmd.Stdout = Dceout
+	cmd.Stdout = Dcelog
 	cmd.Stderr = Dceerr
 
 	cmd.Env = os.Environ()
@@ -325,11 +326,8 @@ func dockerLogToPodLogFile(files []string, retry bool) {
 	cmd := exec.Command("docker-compose", parts...)
 	log.Printf("Command to print container log: %v", cmd.Args)
 
-	Dceout := config.CreateFileAppendMode(types.DCE_OUT)
-	Dceerr := config.CreateFileAppendMode(types.DCE_ERR)
-	cmd.Stdout = Dceout
-	cmd.Stderr = Dceerr
-
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	_, err = waitUtil.RetryCmdLogs(cmd, retry)
 	if err != nil {
 		log.Printf("POD_LAUNCH_LOG_FAIL -- Error running cmd %s\n", cmd.Args)
@@ -372,9 +370,9 @@ func StopPod(files []string) error {
 	}
 
 	cmd := exec.Command("docker-compose", parts...)
-	Dceout := config.CreateFileAppendMode(types.DCE_OUT)
+	Dcelog := config.CreateFileAppendMode(types.DCE_OUT)
 	Dceerr := config.CreateFileAppendMode(types.DCE_ERR)
-	cmd.Stdout = Dceout
+	cmd.Stdout = Dcelog
 	cmd.Stderr = Dceerr
 
 	logger.Printf("Stop Pod : Command to stop task : %s", cmd.Args)
@@ -417,9 +415,9 @@ func RemovePodVolume(files []string) error {
 	}
 
 	cmd := exec.Command("docker-compose", parts...)
-	Dceout := config.CreateFileAppendMode(types.DCE_OUT)
+	Dcelog := config.CreateFileAppendMode(types.DCE_OUT)
 	Dceerr := config.CreateFileAppendMode(types.DCE_ERR)
-	cmd.Stdout = Dceout
+	cmd.Stdout = Dcelog
 	cmd.Stderr = Dceerr
 	log.Println("Remove Pod Volume: Command to rm volume : docker-compose ", parts)
 
@@ -443,9 +441,9 @@ func RemovePodImage(files []string) error {
 	}
 
 	cmd := exec.Command("docker-compose", parts...)
-	Dceout := config.CreateFileAppendMode(types.DCE_OUT)
+	Dcelog := config.CreateFileAppendMode(types.DCE_OUT)
 	Dceerr := config.CreateFileAppendMode(types.DCE_ERR)
-	cmd.Stdout = Dceout
+	cmd.Stdout = Dcelog
 	cmd.Stderr = Dceerr
 
 	log.Println("Remove Pod Image: Command to rm images : docker-compose ", parts)
@@ -476,9 +474,9 @@ func GetContainerNetwork(id string) (string, error) {
 func RemoveNetwork(name string) error {
 	log.Println("====================Remove network====================")
 	cmd := exec.Command("docker", "network", "rm", name)
-	Dceout := config.CreateFileAppendMode(types.DCE_OUT)
+	Dcelog := config.CreateFileAppendMode(types.DCE_OUT)
 	Dceerr := config.CreateFileAppendMode(types.DCE_ERR)
-	cmd.Stdout = Dceout
+	cmd.Stdout = Dcelog
 	cmd.Stderr = Dceerr
 	err := cmd.Run()
 	if err != nil {
@@ -498,9 +496,9 @@ func ForceKill(files []string) error {
 	}
 
 	cmd := exec.Command("docker-compose", parts...)
-	Dceout := config.CreateFileAppendMode(types.DCE_OUT)
+	Dcelog := config.CreateFileAppendMode(types.DCE_OUT)
 	Dceerr := config.CreateFileAppendMode(types.DCE_ERR)
-	cmd.Stdout = Dceout
+	cmd.Stdout = Dcelog
 	cmd.Stderr = Dceerr
 
 	log.Println("Kill Pod : Command to kill task : docker-compose ", parts)
@@ -525,9 +523,9 @@ func PullImage(files []string) error {
 	}
 
 	cmd := exec.Command("docker-compose", parts...)
-	Dceout := config.CreateFileAppendMode(types.DCE_OUT)
+	Dcelog := config.CreateFileAppendMode(types.DCE_OUT)
 	Dceerr := config.CreateFileAppendMode(types.DCE_ERR)
-	cmd.Stdout = Dceout
+	cmd.Stdout = Dcelog
 	cmd.Stderr = Dceerr
 	log.Println("Pull Image : Command to pull images : docker-compose ", parts)
 
@@ -895,9 +893,9 @@ func DockerDump() {
 		cmdDocker := exec.Command("kill", "-USR1", pid)
 		log.Printf("Cmd to kill docker pid: %s", cmdDocker.Path)
 
-		Dceout := config.CreateFileAppendMode(types.DCE_OUT)
+		Dcelog := config.CreateFileAppendMode(types.DCE_OUT)
 		Dceerr := config.CreateFileAppendMode(types.DCE_ERR)
-		cmdDocker.Stdout = Dceout
+		cmdDocker.Stdout = Dcelog
 		cmdDocker.Stderr = Dceerr
 
 		err = cmdDocker.Run()
@@ -919,12 +917,11 @@ func DockerDump() {
 		log.Println(" DockerContainerdPid: ", dockerContainerdPid)
 		cmdContainerd := exec.Command("kill", "-USR1", dockerContainerdPid)
 		log.Printf("Cmd to kill containerd pid: %s", cmdContainerd.Path)
-
-		Dceout := config.CreateFileAppendMode(types.DCE_OUT)
+		Dcelog := config.CreateFileAppendMode(types.DCE_OUT)
 		Dceerr := config.CreateFileAppendMode(types.DCE_ERR)
-		cmdContainerd.Stdout = Dceout
+		cmdContainerd.Stdout = Dcelog
 		cmdContainerd.Stderr = Dceerr
-
+		
 		err = cmdContainerd.Run()
 		if err != nil {
 			log.Errorf("Error running cmd to kill containerd pid: %v", err)
