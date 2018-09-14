@@ -107,6 +107,7 @@ func checkContainerExitCode(containerId string) (int, error) {
 // example : docker-compose -f compose.yaml up
 // "docker-compose" will be the main cmd, "-f compose.yaml up" will be parts and return as an array
 func GenerateCmdParts(files []string, cmd string) ([]string, error) {
+	log.Printf("generate cmd parts for cmd: %v  for files: %v", cmd, files)
 	if config.EnableVerbose() {
 		cmd = " --verbose" + cmd
 	}
@@ -212,7 +213,7 @@ func GetContainerIdByService(files []string, service string) (string, error) {
 func GetPodDetail(files []string, primaryContainerId string, healthcheck bool) {
 	parts, err := GenerateCmdParts(files, " ps")
 	if err != nil {
-		log.Errorln("Error generating cmd parts")
+		log.Errorln("Error generating cmd parts:", err)
 	}
 
 	//out, err := exec.Command("docker-compose", parts...).Output()
@@ -789,12 +790,12 @@ func SendMesosStatus(driver executor.ExecutorDriver, taskId *mesos.TaskID, state
 
 	if !logStatus {
 		if state.Enum().String() == mesos.TaskState_TASK_FINISHED.Enum().String() ||
-			 state.Enum().String() == mesos.TaskState_TASK_KILLED.Enum().String() ||
+			state.Enum().String() == mesos.TaskState_TASK_KILLED.Enum().String() ||
 			state.Enum().String() == mesos.TaskState_TASK_FAILED.Enum().String() {
 
-				log.Printf("Calling log write function again for container logs.")
-				dockerLogToPodLogFile(ComposeFiles, false)
-			}
+			log.Printf("Calling log write function again for container logs.")
+			dockerLogToPodLogFile(ComposeFiles, false)
+		}
 	}
 
 	_, err := driver.SendStatusUpdate(runStatus)
