@@ -95,14 +95,29 @@ func getVersion(filesMap types.ServiceDetail, file string) string {
 
 func updateServiceSessions(serviceName, file, executorId, taskId string, filesMap types.ServiceDetail, ports *list.Element,
 	extraHosts map[interface{}]bool) (*list.Element, error) {
-	containerDetails, ok := filesMap[file][types.SERVICES].(map[interface{}]interface{})[serviceName].(map[interface{}]interface{})
-	if !ok {
-		log.Println("POD_UPDATE_YAML_FAIL")
-	}
+
 	logger := log.WithFields(log.Fields{
 		"serviceName": serviceName,
 		"taskId":      taskId,
 	})
+
+	containerDetail, ok := filesMap[file][types.SERVICES].(map[interface{}]interface{})[serviceName]
+
+	if !ok {
+		log.Println("plugin=general, No Service key available. POD_UPDATE_YAML_FAIL")
+	}
+
+	if containerDetail == nil {
+		logger.Println("Container Detail is nil.")
+		if _, ok := filesMap[file][types.SERVICES].(map[interface{}]interface{})[serviceName]; ok {
+			return ports, nil
+		} else {
+			log.Println("plugin=general, Service is empty POD_UPDATE_YAML_FAIL")
+			return ports, errors.New("service is empty. POD_UPDATE_YAML_FAIL")
+		}
+	}
+
+	containerDetails := containerDetail.(map[interface{}]interface{})
 
 	// Remove restart session
 	if _, ok := containerDetails[types.RESTART].(string); ok {
