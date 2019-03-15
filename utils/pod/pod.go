@@ -298,6 +298,7 @@ func LaunchPod(files []string) types.PodStatus {
 
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%d", types.COMPOSE_HTTP_TIMEOUT, config.GetComposeHttpTimeout()))
+	log.Println("All Environment vars: ", cmd.Env)
 
 	go dockerLogToPodLogFile(files, true)
 

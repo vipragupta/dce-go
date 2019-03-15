@@ -122,6 +122,7 @@ const (
 	FOREVER                 = 1<<63 - 1
 	DCE_OUT                 = "dce.out"
 	DCE_ERR                 = "dce.err"
+	TMP_DIR_DEFAULT         = "tmp"
 )
 
 type ServiceDetail map[interface{}](map[interface{}]interface{})
